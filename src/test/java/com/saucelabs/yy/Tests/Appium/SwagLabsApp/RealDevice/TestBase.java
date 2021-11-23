@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 public class TestBase extends SuperTestBase {
 
     public String buildTag = System.getenv("BUILD_TAG");
-    public final String ANDROID_FILE_NAME = "Android.SauceLabs.Mobile.Sample.app.2.7.1.apk";
+    public final String ANDROID_FILE_NAME = "example-app-debug.apk"; //"Android.SauceLabs.Mobile.Sample.app.2.7.1.apk";
     public final String IOS_FILE_NAME = "iOS.RealDevice.SauceLabs.Mobile.Sample.app.2.7.1.ipa";
 
     private ThreadLocal<String> sessionId = new ThreadLocal<>();
@@ -23,10 +23,12 @@ public class TestBase extends SuperTestBase {
     @DataProvider(name = "AndroidRealDevices", parallel = true)
     public static Object[][] androidRealDevicesDataProvider(Method testMethod) {
         return new Object[][]{
-                new Object[]{"Android", ".*"},
-                new Object[]{"Android", ".*"},
-                new Object[]{"Android", ".*"},
-                new Object[]{"Android", ".*"}
+                new Object[]{"Android", "Google Pixel.*"},
+                new Object[]{"Android", "Motorola Moto X.*"} // Test 32-bit support
+                // Add other devices to test below
+
+                //       new Object[]{"Android", "Google.*"},
+                //       new Object[]{"Android", "Google.*"}
         };
     }
 
@@ -51,7 +53,7 @@ public class TestBase extends SuperTestBase {
         caps.setCapability("deviceName", deviceName);
         caps.setCapability("browserName", "");
         caps.setCapability("platformName", platformName);
-        caps.setCapability("name", testMethod);
+   //     caps.setCapability("name", testMethod);
 
         if (platformName.equals("Android")) {
             caps.setCapability("app", "storage:filename=" + ANDROID_FILE_NAME);
@@ -59,11 +61,12 @@ public class TestBase extends SuperTestBase {
             caps.setCapability("app", "storage:filename=" + IOS_FILE_NAME);
         }
 
-        if (buildTag != null) {
+        // Use buildTag to specify specific versions of app to test
+/*        if (buildTag != null) {
             caps.setCapability("build", buildTag);
         } else {
             caps.setCapability("build", "YiMin-Local-Java-Appium-Mobile-App-" + localBuildTag);
-        }
+        }*/
 
         driver.set(new AppiumDriver<>(createDriverURL(), caps));
         sessionId.set(driver.get().getSessionId().toString());
